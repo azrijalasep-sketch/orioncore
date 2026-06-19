@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ORIONCORE GitHub Edition</title>
+<style>
+body{font-family:Arial,sans-serif;max-width:1000px;margin:auto;padding:20px;background:#0b1020;color:#fff}
+.card{background:#151c33;padding:15px;border-radius:12px;margin:10px 0}
+input,textarea,button{width:100%;padding:10px;margin:5px 0}
+button{cursor:pointer}
+table{width:100%;border-collapse:collapse}
+td,th{border:1px solid #333;padding:8px}
+</style>
+</head>
+<body>
+<h1>ORIONCORE GitHub Edition</h1>
+<div class="card">
+<h2>Jurnal Trading</h2>
+<input id="pair" placeholder="Pair (XAUUSD, EURUSD)">
+<input id="result" placeholder="Result (Win/Loss)">
+<textarea id="note" placeholder="Catatan"></textarea>
+<button onclick="saveTrade()">Simpan</button>
+</div>
+
+<div class="card">
+<h2>Statistik</h2>
+<p id="stats">Belum ada data</p>
+</div>
+
+<div class="card">
+<h2>Riwayat</h2>
+<table>
+<thead><tr><th>Pair</th><th>Hasil</th><th>Catatan</th></tr></thead>
+<tbody id="history"></tbody>
+</table>
+</div>
+
+<script>
+function load(){
+ let data=JSON.parse(localStorage.getItem("orioncore_trades")||"[]");
+ let tbody=document.getElementById("history");
+ tbody.innerHTML="";
+ let win=0;
+ data.forEach(t=>{
+   if((t.result||"").toLowerCase()=="win") win++;
+   tbody.innerHTML+=`<tr><td>${t.pair}</td><td>${t.result}</td><td>${t.note}</td></tr>`;
+ });
+ let wr=data.length?((win/data.length)*100).toFixed(2):0;
+ document.getElementById("stats").innerText=`Total Trade: ${data.length} | Win Rate: ${wr}%`;
+}
+function saveTrade(){
+ let data=JSON.parse(localStorage.getItem("orioncore_trades")||"[]");
+ data.push({
+   pair:document.getElementById("pair").value,
+   result:document.getElementById("result").value,
+   note:document.getElementById("note").value
+ });
+ localStorage.setItem("orioncore_trades",JSON.stringify(data));
+ load();
+}
+load();
+</script>
+</body>
+</html>
